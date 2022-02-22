@@ -1,6 +1,5 @@
 from json_cpp import JsonObject, JsonList
 
-
 class TestFeederResponse(JsonObject):
     def __init__(self, feeder_num: int = 0, feedtime: int = 0, repetition: int = 0, wait_time: int = 0):
         self.feeder_num = feeder_num

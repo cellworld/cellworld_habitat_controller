@@ -2,7 +2,6 @@ from src.experiment_client import ExperimentClient
 from pi_client import PiClient
 import inspect
 import types
-#from console_input import console_input
 
 def get_commands(clients):
     all_members = {}

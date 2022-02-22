@@ -1,16 +1,9 @@
 from tcp_messages import MessageClient, Message
-#from pi_service import PiService
 from pi_messages import *
-import socket
 
 class PiClient(MessageClient):
     def __init__(self):
         MessageClient.__init__(self)
-        # self.router.add_route("experiment_started", self.__process_experiment_started__, StartExperimentResponse)
-
-    # def __process_experiment_started__(self, parameters: StartExperimentResponse):
-    #     if self.on_experiment_started:
-    #         self.on_experiment_started(parameters)
 
     def subscribe(self):
         return self.send_request(Message("!subscribe"), 0).body == "success"
