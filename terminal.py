@@ -3,7 +3,7 @@ from pi_client import PiClient
 from terminal_functions import TerminalFunctions
 
 clients = {'experiment': ExperimentClient(), 'maze1': PiClient(), 'maze2': PiClient()}
-ip = {'experiment': '192.168.137.1', 'maze1': '192.168.137.100', 'maze2': '192.168.137.200'}
+ip = {'experiment': '127.0.0.1', 'maze1': '192.168.137.100', 'maze2': '192.168.137.200'}
 for key, client in clients.items():
     try:
         response = client.connect(ip[key])
@@ -38,10 +38,14 @@ while command != "end":
     if not selected_commands:
         print("command not found.")
     else:
-        parameter_values, chosen_client = term_functions.get_parameters(selected_commands)
-        if chosen_client == '':
+        parameter_values = term_functions.get_parameters(selected_commands)
+        if not parameter_values:
             continue
-        try:
-            print(selected_commands[chosen_client]["method"](*parameter_values))
-        except:
-            print('request failed')
+        for key, parameters in parameter_values.items():
+            if False not in parameters:
+                print(key)
+                print(parameters)
+                try:
+                    print(selected_commands[key]["method"](*parameters))
+                except:
+                    print('request failed')

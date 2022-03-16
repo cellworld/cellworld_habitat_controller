@@ -35,45 +35,73 @@ class TerminalFunctions():
 
     def get_parameters(self, selected_commands): #this function only takes in single unique commands or duplicates
         selected_keys = list(selected_commands.keys())
-        parameters_values = []
-        chosen_client = selected_keys[0]
-        found_comp = False
-        for parameter in selected_commands[chosen_client]["parameters"]:
-            while True:
+        parameters_values = {key: [] for key in selected_keys}
+        if not selected_commands[selected_keys[0]]["parameters"]:
+            return parameters_values
+
+        for parameter in selected_commands[selected_keys[0]]["parameters"]:
+            requests = True
+            found_comp = False
+            check = []
+            while requests:
                 parameter_value = input("- " + parameter[0] + " (" + parameter[1].__name__ + ") : ")
+
                 if parameter_value == '':
-                    return '', ''
+                    return False
+
                 if parameter[0] == 'ip':
-                    for client_name, address in self.ip.items():
-                        if parameter_value in address:
-                            chosen_client = client_name
+                    if parameter_value not in list(self.ip.values()):
+                        print('client ip address does not exist')
+                        continue
+                    for key in selected_keys:
+                        if parameter_value != self.ip[key]:
+                            parameters_values[key].append(False)
+                            check.append(False)
+                        else:
+                            parameters_values[key].append(parameter[1](parameter_value))
+                            check.append(True)
+                            requests = False
+
+
+                elif parameter[0] == 'door_num':
+                    for maze, component in self.maze_components.items():
+                        if parameter_value in str(component['doors']):
                             found_comp = True
-                            print(chosen_client)
                     if not found_comp:
                         print('client ip address does not exist')
                         continue
-                if parameter[0] == 'door_num':
-                    for maze, component in self.maze_components.items():
-                        if parameter_value in str(component['doors']):
-                            chosen_client = maze
-                            found_comp = True
-                    if not found_comp:
-                        print('door does not exist')
-                        continue
-                if parameter[0] == 'feeder_num':
+
+                    for key in selected_keys:
+                        if parameter[1](parameter_value) not in self.maze_components[key]['doors']:
+                            parameters_values[key].append(False)
+                        else:
+                            parameters_values[key].append(parameter[1](parameter_value))
+                            requests = False
+
+                elif parameter[0] == 'feeder_num':
                     for maze, component in self.maze_components.items():
                         if parameter_value in str(component['feeder']):
-                            chosen_client = maze
                             found_comp = True
                     if not found_comp:
                         print('feeder does not exist')
                         continue
-                try:
-                    parameters_values.append(parameter[1](parameter_value))
-                    break
-                except:
-                    print("cannot convert " + parameter_value + " to " + parameter[1].__name__)
-        return parameters_values, chosen_client
+
+                    for key in selected_keys:
+                        if parameter[1](parameter_value) not in self.maze_components[key]['feeder']:
+                            parameters_values[key].append(False)
+                        else:
+                            parameters_values[key].append(parameter[1](parameter_value))
+                            requests = False
+
+                else:
+                    for key in selected_keys:
+                        try:
+                            parameters_values[key].append(parameter[1](parameter_value))
+                            requests = False
+                        except:
+                            print("cannot convert " + parameter_value + " to " + parameter[1].__name__)
+                            break
+        return parameters_values
 
     def get_status(self, all_commands):
         selected_commands = []
@@ -81,9 +109,11 @@ class TerminalFunctions():
         selected_commands.append({'maze1': all_commands['maze1']['status']})
         selected_commands.append({'maze2': all_commands['maze2']['status']})
         for selected_command in selected_commands:
-            parameter_values, chosen_client = self.get_parameters(selected_command)
+            parameter_values = self.get_parameters(selected_command)
+            chosen_client = list(parameter_values.keys())[0]
+            parameters = parameter_values[chosen_client]
             try:
-                status = selected_command[chosen_client]["method"](*parameter_values)
+                status = selected_command[chosen_client]["method"](*parameters)
             except:
                 print(f"status of {list(selected_command.keys())} could not be found")
                 continue
