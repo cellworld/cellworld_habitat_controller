@@ -42,10 +42,10 @@ while command != "end":
         if not parameter_values:
             continue
         for key, parameters in parameter_values.items():
-            if False not in parameters:
-                print(key)
-                print(parameters)
+            if None not in parameters:
+                # print(key)
+                # print(parameters)
                 try:
                     print(selected_commands[key]["method"](*parameters))
                 except:
-                    print('request failed')
+                    print(f'request failed for {key}')

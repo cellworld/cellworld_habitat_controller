@@ -55,7 +55,7 @@ class TerminalFunctions():
                         continue
                     for key in selected_keys:
                         if parameter_value != self.ip[key]:
-                            parameters_values[key].append(False)
+                            parameters_values[key].append(None)
                             check.append(False)
                         else:
                             parameters_values[key].append(parameter[1](parameter_value))
@@ -73,7 +73,7 @@ class TerminalFunctions():
 
                     for key in selected_keys:
                         if parameter[1](parameter_value) not in self.maze_components[key]['doors']:
-                            parameters_values[key].append(False)
+                            parameters_values[key].append(None)
                         else:
                             parameters_values[key].append(parameter[1](parameter_value))
                             requests = False
@@ -88,7 +88,7 @@ class TerminalFunctions():
 
                     for key in selected_keys:
                         if parameter[1](parameter_value) not in self.maze_components[key]['feeder']:
-                            parameters_values[key].append(False)
+                            parameters_values[key].append(None)
                         else:
                             parameters_values[key].append(parameter[1](parameter_value))
                             requests = False
