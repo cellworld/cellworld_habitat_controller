@@ -44,7 +44,12 @@ class TerminalFunctions():
             found_comp = False
             check = []
             while requests:
-                parameter_value = input("- " + parameter[0] + " (" + parameter[1].__name__ + ") : ")
+                if parameter[0] == 'world_configuration':
+                    parameter_value = 'hexagonal'
+                elif parameter[0] == 'world_implementation':
+                    parameter_value = 'mice'
+                else:
+                    parameter_value = input("- " + parameter[0] + " (" + parameter[1].__name__ + ") : ")
 
                 if parameter_value == '':
                     return False

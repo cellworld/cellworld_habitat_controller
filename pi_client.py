@@ -21,8 +21,8 @@ class PiClient(MessageClient):
     def close_door(self, door_num: int) -> str:
         return self.send_request(Message("close_door", door_num), 5000).get_body(str)
 
-    def calibrate_door(self, door_num: int) -> str:
-        return self.send_request(Message("calibrate_door", door_num), 5000).get_body(str)
+    # def calibrate_door(self, door_num: int) -> str:
+    #     return self.send_request(Message("calibrate_door", door_num), 5000).get_body(str)
 
     def save_calibration(self) -> str:
         return self.send_request(Message("save_calibration"), 5000).get_body(str)
