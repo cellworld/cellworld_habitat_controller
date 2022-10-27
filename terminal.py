@@ -1,6 +1,8 @@
 from cellworld_experiment_service import ExperimentClient
 from pi_client import PiClient
 from terminal_functions import TerminalFunctions
+import threading
+import keyboard
 
 clients = {'experiment': ExperimentClient(), 'maze1': PiClient(), 'maze2': PiClient()}
 ip = {'experiment': '127.0.0.1', 'maze1': '192.168.137.100', 'maze2': '192.168.137.200'}
@@ -18,10 +20,26 @@ maze_components = {'maze1': {'doors': [1, 2], 'feeder': [1]},
 term_functions = TerminalFunctions(clients, maze_components, ip)
 all_commands = term_functions.get_commands()
 
+# clients['experiment'].subscribe()
+
 command = ""
+
+keyboard.add_hotkey('alt+shift', clients['maze1'].open_door, args=[1])
+
 while command != "end":
     selected_commands = {}
     command = input("_________________\nHabitat: ")
+    if command == "refresh_connection":
+        for key, client in clients.items():
+            try:
+                response = client.connect(ip[key])
+                if response:
+                    print(f'connected to {key}')
+                else:
+                    print(f'CANNOT connect to {key}!!!!')
+            except:
+                print(f'CANNOT connect to {key}!!!!')
+        continue
     if command == "help":
         for key, commands in all_commands.items():
             print(f'{key}:')
@@ -43,8 +61,6 @@ while command != "end":
             continue
         for key, parameters in parameter_values.items():
             if None not in parameters:
-                # print(key)
-                # print(parameters)
                 try:
                     print(selected_commands[key]["method"](*parameters))
                 except:
