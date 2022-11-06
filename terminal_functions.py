@@ -33,7 +33,7 @@ class TerminalFunctions():
             all_commands[key] = commands
         return all_commands
 
-    def get_parameters(self, selected_commands): #this function only takes in single unique commands or duplicates
+    def get_parameters(self, selected_commands, defaults: {}): #this function only takes in single unique commands or duplicates
         selected_keys = list(selected_commands.keys())
         parameters_values = {key: [] for key in selected_keys}
         if not selected_commands[selected_keys[0]]["parameters"]:
@@ -49,7 +49,10 @@ class TerminalFunctions():
                 elif parameter[0] == 'world_implementation':
                     parameter_value = 'mice'
                 else:
-                    parameter_value = input("- " + parameter[0] + " (" + parameter[1].__name__ + ") : ")
+                    if parameter[0] in defaults:
+                        parameter_value = input("- " + parameter[0] + " (" + parameter[1].__name__ + ") [" + str(defaults[parameter[0]]) + "]: ") or str(defaults[parameter[0]])
+                    else:
+                        parameter_value = input("- " + parameter[0] + " (" + parameter[1].__name__ + "): ")
 
                 if parameter_value == '':
                     return False
@@ -108,13 +111,13 @@ class TerminalFunctions():
                             break
         return parameters_values
 
-    def get_status(self, all_commands):
+    def get_status(self, all_commands, defaults):
         selected_commands = []
         selected_commands.append({'experiment': all_commands['experiment']['get_experiment']})
         selected_commands.append({'maze1': all_commands['maze1']['status']})
         selected_commands.append({'maze2': all_commands['maze2']['status']})
         for selected_command in selected_commands:
-            parameter_values = self.get_parameters(selected_command)
+            parameter_values = self.get_parameters(selected_command, defaults)
             chosen_client = list(parameter_values.keys())[0]
             parameters = parameter_values[chosen_client]
             try:
