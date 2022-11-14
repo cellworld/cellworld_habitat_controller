@@ -141,10 +141,7 @@ class TerminalFunctions():
                       f'\n\tDoor {status.door_state[1].num}: {status.door_state[1].state}'
                       f'\n\tFeeder: {status.feeder_state}')
         return
-    def episode_finished(self, exp_name):
+    def experiment_finished(self, exp_name):
         print(exp_name)
-        if not self.clients['experiment'].is_active(exp_name):
-            self.experiment_join.join_episodes(exp_name)
-            return
-        else:
-            return
+        self.experiment_join.join_episodes(exp_name)
+        return

@@ -22,7 +22,7 @@ maze_components = {'maze1': {'doors': [1, 2], 'feeder': [1]},
 experiment_join = ExperimentJoin()
 term_functions = TerminalFunctions(experiment_join, clients, maze_components, ip)
 all_commands = term_functions.get_commands()
-# clients['experiment'].on_episode_finished = term_functions.episode_finished
+clients['experiment'].on_experiment_finished = term_functions.experiment_finished
 clients['experiment'].subscribe()
 
 defaults = {"experiment_name": "", "occlusions": "21_05"}
