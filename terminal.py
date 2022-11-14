@@ -3,6 +3,7 @@ from pi_client import PiClient
 from terminal_functions import TerminalFunctions
 import threading
 import keyboard
+from experiment_join import ExperimentJoin
 from json_cpp import JsonObject
 
 clients = {'experiment': ExperimentClient(), 'maze1': PiClient(), 'maze2': PiClient()}
@@ -18,19 +19,26 @@ for key, client in clients.items():
         print(f'CANNOT connect to {key}!!!!')
 maze_components = {'maze1': {'doors': [1, 2], 'feeder': [1]},
                    'maze2': {'doors': [0, 3], 'feeder': [2]}}
-term_functions = TerminalFunctions(clients, maze_components, ip)
+experiment_join = ExperimentJoin()
+term_functions = TerminalFunctions(experiment_join, clients, maze_components, ip)
 all_commands = term_functions.get_commands()
+# clients['experiment'].on_episode_finished = term_functions.episode_finished
+clients['experiment'].subscribe()
 
-# clients['experiment'].subscribe()
 defaults = {"experiment_name": "", "occlusions": "21_05"}
 command = ""
 keyboard.add_hotkey('alt+shift', clients['maze1'].open_door, args=[2])
+
 
 while command != "end":
     selected_commands = {}
     command = input("_________________\nHabitat: ")
     command = command.replace(" ", "_")
-    if command == "refresh_connection":
+    if command == "exp_join":
+        experiment_name = input("experiment_name" + "[" + str(defaults["experiment_name"]) + "]: ") or str(defaults["experiment_name"])
+        experiment_join.join_episodes(experiment_name)
+        continue
+    if command == "reconnect":
         for key, client in clients.items():
             try:
                 response = client.connect(ip[key])

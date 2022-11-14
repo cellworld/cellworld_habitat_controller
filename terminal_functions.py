@@ -2,7 +2,8 @@ import inspect
 import types
 
 class TerminalFunctions():
-    def __init__(self, clients, maze_components, ip):
+    def __init__(self, experiment_join, clients, maze_components, ip):
+        self.experiment_join = experiment_join
         self.clients = clients
         self.maze_components = maze_components
         self.ip = ip
@@ -140,3 +141,10 @@ class TerminalFunctions():
                       f'\n\tDoor {status.door_state[1].num}: {status.door_state[1].state}'
                       f'\n\tFeeder: {status.feeder_state}')
         return
+    def episode_finished(self, exp_name):
+        print(exp_name)
+        if not self.clients['experiment'].is_active(exp_name):
+            self.experiment_join.join_episodes(exp_name)
+            return
+        else:
+            return
