@@ -1,12 +1,17 @@
 import inspect
 import types
+from tqdm import tqdm
+from cellworld import Experiment, Episode
+
 
 class TerminalFunctions():
-    def __init__(self, experiment_join, clients, maze_components, ip):
+    def __init__(self, experiment_join, gdrive, clients, maze_components, ip):
         self.experiment_join = experiment_join
+        self.gdrive = gdrive
         self.clients = clients
         self.maze_components = maze_components
         self.ip = ip
+        self.resumed_exp = ''
 
     def get_commands(self):
         all_members = {}
@@ -141,7 +146,12 @@ class TerminalFunctions():
                       f'\n\tDoor {status.door_state[1].num}: {status.door_state[1].state}'
                       f'\n\tFeeder: {status.feeder_state}')
         return
-    def experiment_finished(self, exp_name):
-        print(exp_name)
-        self.experiment_join.join_episodes(exp_name)
-        return
+
+    # def experiment_finished(self, exp_name):
+    #     exp_log = self.experiment_join.get_experiment_file(exp_name).replace(".json", "_full.json")
+    #     experiment = Experiment.load_from_file(exp_log)
+    #     resumed = False
+    #     if experiment and not experiment.episodes[-1]:
+    #         self.experiment_join.join_episodes(exp_name)
+    #     self.gdrive.upload_exp(exp_name, resumed)
+    #     return

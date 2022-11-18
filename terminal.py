@@ -5,9 +5,12 @@ import threading
 import keyboard
 from experiment_join import ExperimentJoin
 from json_cpp import JsonObject
+from gdrive import *
 
 clients = {'experiment': ExperimentClient(), 'maze1': PiClient(), 'maze2': PiClient()}
 ip = {'experiment': '127.0.0.1', 'maze1': '192.168.137.100', 'maze2': '192.168.137.200'}
+# experiment_log_folder = "/research/data"
+experiment_log_folder = "C:/Users/AlexT/OneDrive/Laptop Documents/Northwestern/[0] Research/Testing/"
 for key, client in clients.items():
     try:
         response = client.connect(ip[key])
@@ -19,11 +22,12 @@ for key, client in clients.items():
         print(f'CANNOT connect to {key}!!!!')
 maze_components = {'maze1': {'doors': [1, 2], 'feeder': [1]},
                    'maze2': {'doors': [0, 3], 'feeder': [2]}}
-experiment_join = ExperimentJoin()
-term_functions = TerminalFunctions(experiment_join, clients, maze_components, ip)
+experiment_join = ExperimentJoin(experiment_log_folder)
+gdrive = GDrive(experiment_log_folder, experiment_join)
+term_functions = TerminalFunctions(experiment_join, gdrive, clients, maze_components, ip)
 all_commands = term_functions.get_commands()
-clients['experiment'].on_experiment_finished = term_functions.experiment_finished
-clients['experiment'].subscribe()
+# clients['experiment'].on_experiment_finished = term_functions.experiment_finished
+# clients['experiment'].subscribe()
 
 defaults = {"experiment_name": "", "occlusions": "21_05"}
 command = ""
@@ -37,6 +41,14 @@ while command != "end":
     if command == "exp_join":
         experiment_name = input("experiment_name" + "[" + str(defaults["experiment_name"]) + "]: ") or str(defaults["experiment_name"])
         experiment_join.join_episodes(experiment_name)
+        continue
+    if command == "upload_experiment":
+        check = input("This will LOCK terminal for several minutes. Proceed? (Y/N): ")
+        if check == 'y' or check == 'Y':
+            experiment_name = input("experiment_name" + "[" + str(defaults["experiment_name"]) + "]: ") or str(
+                defaults["experiment_name"])
+            experiment_join.join_episodes(experiment_name)
+            gdrive.upload_exp(experiment_name)
         continue
     if command == "reconnect":
         for key, client in clients.items():

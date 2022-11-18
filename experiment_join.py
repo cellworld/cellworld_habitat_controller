@@ -1,9 +1,10 @@
 from cellworld import Experiment, Episode
+from tqdm import tqdm
 
 class ExperimentJoin():
 
-    def __init__(self):
-        self.experiment_log_folder = "/research/data"
+    def __init__(self, experiment_log_folder):
+        self.experiment_log_folder = experiment_log_folder
 
     def get_experiment_folder(self, experiment_name):
         return self.experiment_log_folder + "/" + experiment_name.split('_')[0] + "/" + experiment_name
@@ -20,15 +21,15 @@ class ExperimentJoin():
 
     def join_episodes(self, experiment_name):
         experiment_file = self.get_experiment_file(experiment_name)
-        print(f'\ncombining episodes for {experiment_file}')
-        print("_________________\nHabitat: ")
+        print(f'combining episodes for {experiment_file}')
+        # print("_________________\nHabitat: ")
         experiment = Experiment.load_from_file(experiment_file)
         if not experiment:
             print("file not found")
             print("_________________\nHabitat: ")
 
         experiment.episodes.clear()
-        for i in range(experiment.episode_count):
+        for i in tqdm(range(experiment.episode_count)):
             episode = Episode.load_from_file(self.get_episode_file(experiment_name, i))
             experiment.episodes.append(episode)
 
