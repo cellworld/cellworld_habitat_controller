@@ -2,6 +2,7 @@ import os
 from tqdm import tqdm
 from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
+from time import sleep
 # MUST USE httplib2==0.15.0 IN PIP
 
 
@@ -69,6 +70,7 @@ class GDrive():
         file = self.drive.CreateFile(file_metadata)
         if folder:
             file.Upload()
+            sleep(10)
             file_id = self.find_index(title, parent_id)
             return file, file_id
         else:
