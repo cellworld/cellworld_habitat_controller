@@ -29,7 +29,7 @@ all_commands = term_functions.get_commands()
 # clients['experiment'].on_experiment_finished = term_functions.experiment_finished
 # clients['experiment'].subscribe()
 
-defaults = {"experiment_name": "", "occlusions": "21_05"}
+defaults = {"experiment_name": "", "occlusions": "21_05", "rewards_cells": "none", "rewards_orientations": "none", "rewards_sequence": "none"}
 command = ""
 keyboard.add_hotkey('alt+shift', clients['maze1'].open_door, args=[2])
 
