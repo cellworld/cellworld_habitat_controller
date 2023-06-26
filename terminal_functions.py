@@ -1,5 +1,8 @@
 import inspect
 import types
+
+import cellworld
+import json_cpp
 from tqdm import tqdm
 from cellworld import Experiment, Episode
 
@@ -59,6 +62,19 @@ class TerminalFunctions():
                         parameter_value = input("- " + parameter[0] + " (" + parameter[1].__name__ + ") [" + str(defaults[parameter[0]]) + "]: ") or str(defaults[parameter[0]])
                     else:
                         parameter_value = input("- " + parameter[0] + " (" + parameter[1].__name__ + "): ")
+
+                if parameter[0] == 'rewards_cells':
+                    if parameter_value == 'none':
+                        parameters_values[key].append(None)
+                    else:
+                        parameter_value = cellworld.Cell_group_builder([int(x) for x in parameter_value.split(',')])
+                        parameters_values[key].append(parameter_value)
+                if parameter[0] == 'rewards_orientations' or parameter[0] == 'rewards_sequence':
+                    if parameter_value == 'none':
+                        parameters_values[key].append(None)
+                    else:
+                        parameter_value = json_cpp.JsonList([int(x) for x in parameter_value.split(',')], list_type = int)
+                        parameters_values[key].append(parameter_value)
 
                 if parameter_value == '':
                     return False
