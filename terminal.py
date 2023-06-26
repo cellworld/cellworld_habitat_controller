@@ -8,6 +8,7 @@ from json_cpp import JsonObject
 from gdrive import *
 
 clients = {'experiment': ExperimentClient(), 'maze1': PiClient(), 'maze2': PiClient()}
+
 ip = {'experiment': '127.0.0.1', 'maze1': '192.168.137.100', 'maze2': '192.168.137.200'}
 experiment_log_folder = "/research/data"
 # experiment_log_folder = "C:/Users/AlexT/OneDrive/Laptop Documents/Northwestern/[0] Research/Testing/"
