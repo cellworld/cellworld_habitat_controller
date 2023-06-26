@@ -63,19 +63,6 @@ class TerminalFunctions():
                     else:
                         parameter_value = input("- " + parameter[0] + " (" + parameter[1].__name__ + "): ")
 
-                if parameter[0] == 'rewards_cells':
-                    if parameter_value == 'none':
-                        parameters_values[key].append(None)
-                    else:
-                        parameter_value = cellworld.Cell_group_builder([int(x) for x in parameter_value.split(',')])
-                        parameters_values[key].append(parameter_value)
-                if parameter[0] == 'rewards_orientations' or parameter[0] == 'rewards_sequence':
-                    if parameter_value == 'none':
-                        parameters_values[key].append(None)
-                    else:
-                        parameter_value = json_cpp.JsonList([int(x) for x in parameter_value.split(',')], list_type = int)
-                        parameters_values[key].append(parameter_value)
-
                 if parameter_value == '':
                     return False
 
@@ -92,6 +79,20 @@ class TerminalFunctions():
                             check.append(True)
                             requests = False
 
+                elif parameter[0] == 'rewards_cells':
+                    if parameter_value == 'none':
+                        parameters_values[key].append(None)
+                    else:
+                        parameter_value = cellworld.Cell_group_builder([int(x) for x in parameter_value.split(',')])
+                        parameters_values[key].append(parameter_value)
+                    requests = False
+                elif parameter[0] == 'rewards_orientations' or parameter[0] == 'rewards_sequence':
+                    if parameter_value == 'none':
+                        parameters_values[key].append(None)
+                    else:
+                        parameter_value = json_cpp.JsonList([int(x) for x in parameter_value.split(',')], list_type = int)
+                        parameters_values[key].append(parameter_value)
+                    requests = False
 
                 elif parameter[0] == 'door_num':
                     for maze, component in self.maze_components.items():
