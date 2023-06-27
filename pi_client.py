@@ -9,7 +9,7 @@ class PiClient(MessageClient):
         return self.send_request(Message("!subscribe"), 0).body == "success"
 
     def connect(self, ip: str = "127.0.0.1") -> str:
-        if ip == "192.168.137.100":
+        if ip == "192.168.137.101":
             port_num = 4610
         else:
             port_num = 4620
