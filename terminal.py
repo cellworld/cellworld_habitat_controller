@@ -7,7 +7,6 @@ from experiment_join import ExperimentJoin
 from json_cpp import JsonObject
 from gdrive import *
 
-# clients = {'experiment': ExperimentClient(), 'maze1': PiClient(), 'maze2': PiClient()}
 tasks = ['SHARP', 'OASIS']
 while True:
     task_index = input(f"Please input index of task {tasks} : ")
