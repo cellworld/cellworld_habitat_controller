@@ -79,6 +79,7 @@ class TerminalFunctions():
     def get_parameters(self, selected_commands, defaults: {}): #this function only takes in single unique commands or duplicates
         selected_keys = list(selected_commands.keys())
         parameters_values = {key: [] for key in selected_keys}
+        print(parameters_values)
         if not selected_commands[selected_keys[0]]["parameters"]:
             return parameters_values
 
@@ -115,14 +116,14 @@ class TerminalFunctions():
 
                 elif parameter[0] == 'rewards_cells':
                     if parameter_value == 'none':
-                        parameters_values[key].append(None)
+                        parameters_values[key].append(cellworld.Cell_group_builder())
                     else:
                         parameter_value = cellworld.Cell_group_builder([int(x) for x in parameter_value.split(',')])
                         parameters_values[key].append(parameter_value)
                     requests = False
                 elif parameter[0] == 'rewards_orientations' or parameter[0] == 'rewards_sequence':
                     if parameter_value == 'none':
-                        parameters_values[key].append(None)
+                        parameters_values[key].append(json_cpp.JsonList())
                     else:
                         parameter_value = json_cpp.JsonList([int(x) for x in parameter_value.split(',')], list_type = int)
                         parameters_values[key].append(parameter_value)

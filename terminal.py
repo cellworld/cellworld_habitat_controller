@@ -32,12 +32,9 @@ gdrive = GDrive(experiment_log_folder, experiment_join)
 term_functions = TerminalFunctions(experiment_join, gdrive, tasks)
 
 clients, ip, maze_components = term_functions.get_clients_ips(selected_task)
-print(clients)
-print(ip)
-print(maze_components)
 all_commands = term_functions.get_commands()
 # clients['experiment'].on_experiment_finished = term_functions.experiment_finished
-clients['experiment'].connect('127.0.0.1')
+#clients['experiment'].connect('127.0.0.1')
 
 defaults = {"experiment_name": "", "occlusions": "21_05", "rewards_cells": "none", "rewards_orientations": "none", "rewards_sequence": "none"}
 command = ""
