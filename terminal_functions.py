@@ -1,20 +1,54 @@
 import inspect
 import types
-
+from pi_client import PiClient
+import re
 import cellworld
 import json_cpp
 from tqdm import tqdm
 from cellworld import Experiment, Episode
-
+from cellworld_experiment_service import ExperimentClient
 
 class TerminalFunctions():
-    def __init__(self, experiment_join, gdrive, clients, maze_components, ip):
+    def __init__(self, experiment_join, gdrive, tasks):
         self.experiment_join = experiment_join
         self.gdrive = gdrive
-        self.clients = clients
-        self.maze_components = maze_components
-        self.ip = ip
         self.resumed_exp = ''
+
+        self.clients = {'experiment': ExperimentClient()}
+        self.ips = {'experiment': '127.0.0.1'}
+        self.maze_components = {}
+        self.tasks = tasks
+        self.base_ips = {'maze': '192.168.137.10','oasis': '192.168.137.'}
+        self.base_components = {'maze1': {'doors': [1, 2], 'feeder': [1]},
+                                'maze2': {'doors': [0, 3], 'feeder': [2]},
+                                'oasis': {'doors': [],'feeder': []}}
+    def get_clients_ips(self, selected_tasks):
+        if selected_tasks == 'SHARP':
+            devices = ['maze1', 'maze2']
+            print(f'\t{devices}')
+        else:
+            devices = ['maze1']
+            while True:
+                num_oasis = input(f"input number of oasis obstacles: ")
+                try:
+                    num_oasis = int(num_oasis)
+                    break
+                except Exception as e:
+                    print(e)
+            devices = devices + ['oasis'+str(200+x) for x in range(num_oasis)]
+            print(f'\t{devices}')
+        pattern = r'[0-9]'
+        pi_clients = {d: PiClient() for d in devices}
+        self.clients.update(pi_clients)
+        pi_ips = {d: self.base_ips[re.sub(pattern,'',d)] + d.split(re.sub(pattern,'',d))[-1] for d in devices}
+        self.ips.update(pi_ips)
+        for d in devices:
+            if 'oasis' not in d:
+                self.maze_components[d] = self.base_components[d]
+            else:
+                self.base_components[re.sub(pattern,'',d)]['feeder'] = [int(d.split(re.sub(pattern,'',d))[-1])]
+                self.maze_components[d] = self.base_components[re.sub(pattern,'',d)].copy()
+        return self.clients, self.ips, self.maze_components
 
     def get_commands(self):
         all_members = {}
