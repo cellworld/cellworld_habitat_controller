@@ -15,7 +15,7 @@ class TerminalFunctions():
         self.resumed_exp = ''
 
         self.clients = {'experiment': ExperimentClient()}
-        self.ips = {'experiment': '127.0.0.1'}
+        self.ip = {'experiment': '127.0.0.1'}
         self.maze_components = {}
         self.tasks = tasks
         self.base_ips = {'maze': '192.168.137.10','oasis': '192.168.137.'}
@@ -41,14 +41,14 @@ class TerminalFunctions():
         pi_clients = {d: PiClient() for d in devices}
         self.clients.update(pi_clients)
         pi_ips = {d: self.base_ips[re.sub(pattern,'',d)] + d.split(re.sub(pattern,'',d))[-1] for d in devices}
-        self.ips.update(pi_ips)
+        self.ip.update(pi_ips)
         for d in devices:
             if 'oasis' not in d:
                 self.maze_components[d] = self.base_components[d]
             else:
                 self.base_components[re.sub(pattern,'',d)]['feeder'] = [int(d.split(re.sub(pattern,'',d))[-1])]
                 self.maze_components[d] = self.base_components[re.sub(pattern,'',d)].copy()
-        return self.clients, self.ips, self.maze_components
+        return self.clients, self.ip, self.maze_components
 
     def get_commands(self):
         all_members = {}
@@ -79,7 +79,6 @@ class TerminalFunctions():
     def get_parameters(self, selected_commands, defaults: {}): #this function only takes in single unique commands or duplicates
         selected_keys = list(selected_commands.keys())
         parameters_values = {key: [] for key in selected_keys}
-        print(parameters_values)
         if not selected_commands[selected_keys[0]]["parameters"]:
             return parameters_values
 
@@ -94,11 +93,11 @@ class TerminalFunctions():
                     parameter_value = 'mice'
                 else:
                     if parameter[0] in defaults:
-                        parameter_value = input("- " + parameter[0] + " (" + parameter[1].__name__ + ") [" + str(defaults[parameter[0]]) + "]: ") or str(defaults[parameter[0]])
+                        parameter_value = input("- " + parameter[0] + " (" + parameter[1].__name__ + ") [" + str(defaults[parameter[0]]) + "]: ") or defaults[parameter[0]]
                     else:
                         parameter_value = input("- " + parameter[0] + " (" + parameter[1].__name__ + "): ")
 
-                if parameter_value == '':
+                if parameter_value == '' or parameter_value == 'redo':
                     return False
 
                 if parameter[0] == 'ip':
@@ -114,19 +113,21 @@ class TerminalFunctions():
                             check.append(True)
                             requests = False
 
-                elif parameter[0] == 'rewards_cells':
-                    if parameter_value == 'none':
-                        parameters_values[key].append(cellworld.Cell_group_builder())
-                    else:
-                        parameter_value = cellworld.Cell_group_builder([int(x) for x in parameter_value.split(',')])
-                        parameters_values[key].append(parameter_value)
+                elif parameter[0] == 'rewards_cells' or parameter[0] == 'rewards_sequence':
+                    for key in selected_keys:
+                        if type(parameter_value) == parameter[1]:
+                            parameters_values[key].append(parameter_value)
+                        else:
+                            parameter_value = parameter[1]([int(x) for x in parameter_value.split(',')])
+                            parameters_values[key].append(parameter_value)
                     requests = False
-                elif parameter[0] == 'rewards_orientations' or parameter[0] == 'rewards_sequence':
-                    if parameter_value == 'none':
-                        parameters_values[key].append(json_cpp.JsonList())
-                    else:
-                        parameter_value = json_cpp.JsonList([int(x) for x in parameter_value.split(',')], list_type = int)
-                        parameters_values[key].append(parameter_value)
+                elif parameter[0] == 'rewards_orientations':
+                    for key in selected_keys:
+                        if type(parameter_value) == parameter[1]:
+                            parameters_values[key].append(parameter_value)
+                        else:
+                            parameter_value = parameter[1]([int(x) for x in parameter_value.split(',')], list_type=int)
+                            parameters_values[key].append(parameter_value)
                     requests = False
 
                 elif parameter[0] == 'door_num':

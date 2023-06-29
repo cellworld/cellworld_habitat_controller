@@ -1,5 +1,6 @@
 import matplotlib
 import matplotlib.pyplot
+import cellworld
 from terminal_functions import *
 import threading
 import keyboard
@@ -17,6 +18,13 @@ while True:
         print(e)
 experiment_log_folder = "/research/data"
 # experiment_log_folder = "C:/Users/AlexT/OneDrive/Laptop Documents/Northwestern/RESEARCH/Testing/"
+experiment_join = ExperimentJoin(experiment_log_folder)
+gdrive = GDrive(experiment_log_folder, experiment_join)
+term_functions = TerminalFunctions(experiment_join, gdrive, tasks)
+
+clients, ip, maze_components = term_functions.get_clients_ips(selected_task)
+all_commands = term_functions.get_commands()
+
 for key, client in clients.items():
     try:
         response = client.connect(ip[key])
@@ -26,16 +34,12 @@ for key, client in clients.items():
             print(f'CANNOT connect to {key}!!!!')
     except:
         print(f'CANNOT connect to {key}!!!!')
-experiment_join = ExperimentJoin(experiment_log_folder)
-gdrive = GDrive(experiment_log_folder, experiment_join)
-term_functions = TerminalFunctions(experiment_join, gdrive, tasks)
 
-clients, ip, maze_components = term_functions.get_clients_ips(selected_task)
-all_commands = term_functions.get_commands()
 # clients['experiment'].on_experiment_finished = term_functions.experiment_finished
-#clients['experiment'].connect('127.0.0.1')
+# clients['experiment'].connect('127.0.0.1')
 
-defaults = {"experiment_name": "", "occlusions": "21_05", "rewards_cells": "none", "rewards_orientations": "none", "rewards_sequence": "none"}
+defaults = {"experiment_name": "", "occlusions": "21_05", "rewards_cells": cellworld.Cell_group_builder(),
+            "rewards_orientations": json_cpp.JsonList(), "rewards_sequence": json_cpp.JsonList()}
 command = ""
 keyboard.add_hotkey('alt+shift', clients['maze1'].open_door, args=[2])
 
