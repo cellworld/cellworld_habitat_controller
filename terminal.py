@@ -39,7 +39,7 @@ for key, client in clients.items():
 # clients['experiment'].connect('127.0.0.1')
 
 defaults = {"experiment_name": "", "occlusions": "21_05", "rewards_cells": cellworld.Cell_group_builder(),
-            "rewards_orientations": json_cpp.JsonList(), "rewards_sequence": json_cpp.JsonList()}
+            "rewards_orientations": json_cpp.JsonList(), "rewards_sequence": cellworld.Cell_group_builder()}
 command = ""
 keyboard.add_hotkey('alt+shift', clients['maze1'].open_door, args=[2])
 
