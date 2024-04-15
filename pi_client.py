@@ -36,6 +36,9 @@ class PiClient(MessageClient):
     def enable_feeder(self, feeder_num: int) -> str:
         return self.send_request(Message("enable_feeder", feeder_num), 5000).get_body(str)
 
+    def disable_feeder(self, feeder_num: int) -> str:
+        return self.send_request(Message("disable_feeder", feeder_num), 5000).get_body(str)
+
     def feeder_reached(self, feeder_num: int) -> str:
         return self.send_request(Message("feeder_reached", feeder_num), 5000).get_body(str)
 
