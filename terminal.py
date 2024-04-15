@@ -1,5 +1,3 @@
-import matplotlib
-import matplotlib.pyplot
 import cellworld
 from terminal_functions import *
 import threading
@@ -8,7 +6,7 @@ from experiment_join import ExperimentJoin
 from json_cpp import JsonObject
 from gdrive import *
 
-tasks = ['SHARP', 'OASIS']
+tasks = ['BOTEVADE', 'OASIS']
 while True:
     task_index = input(f"Please input index of task {tasks} : ")
     try:
@@ -41,8 +39,41 @@ for key, client in clients.items():
 defaults = {"experiment_name": "", "occlusions": "21_05", "rewards_cells": cellworld.Cell_group_builder(),
             "rewards_orientations": json_cpp.JsonList(), "rewards_sequence": cellworld.Cell_group_builder()}
 command = ""
-keyboard.add_hotkey('alt+shift', clients['maze1'].open_door, args=[2])
 
+hotkeys = {'alt+shift': {'command': clients['maze1'].open_door, 'arg': [2]},
+           '1+up': {'command': clients['maze1'].open_door, 'arg': [1]},
+           '2+up': {'command': clients['maze1'].open_door, 'arg': [2]},
+           '3+up': {'command': clients['maze2'].open_door, 'arg': [3]},
+           '0+up': {'command': clients['maze2'].open_door, 'arg': [0]},
+           '1+down': {'command': clients['maze1'].close_door, 'arg': [1]},
+           '2+down': {'command': clients['maze1'].close_door, 'arg': [2]},
+           '3+down': {'command': clients['maze2'].close_door, 'arg': [3]},
+           '0+down': {'command': clients['maze2'].close_door, 'arg': [0]},
+           '1+.': {'command': clients['maze1'].give_reward, 'arg': [2]},
+           '2+.': {'command': clients['maze1'].open_door, 'arg': [2]},
+           '*+-': {'command': clients['experiment'].finish_episode, 'arg': []},
+           '*+plus': {'command': clients['experiment'].start_episode, 'arg': [defaults["experiment_name"]]},
+           '*+t': {'command': clients['experiment'].start_experiment, 'arg': ['TEST', 'test', 'hexagonal', 'mice',
+                                                                              '00_00', 'test', 10]},
+           '*+end': {'command': clients['experiment'].finish_experiment, 'arg': [defaults["experiment_name"]]}
+           }
+# print(cellworld.Cell_group_builder())
+# def check_hotkey(message):
+#     print(message)
+#     return
+#
+# hotkey_check = {'alt+shift': {'command': check_hotkey, 'arg': ['alt shift']},
+#            '1+up': {'command': check_hotkey, 'arg': ['open_door']},
+#            '1+down': {'command': check_hotkey, 'arg': ['close_door']},
+#            '1+.': {'command': check_hotkey, 'arg': ['give_reward']},
+#            '*+-': {'command': check_hotkey, 'arg': ['finish_episode']},
+#            '*+plus': {'command': check_hotkey, 'arg': ["start_episode"]},
+#             '*+end': {'command': check_hotkey, 'arg': ["start_test_experiment"]}
+#            }
+
+# keyboard.add_hotkey('alt+shift', clients['maze1'].open_door, args=[2])
+for hotk, hotk_func in hotkey_check.items():
+    keyboard.add_hotkey(hotk, hotk_func['command'], args= hotk_func['arg'])
 
 while command != "end":
     selected_commands = {}

@@ -23,7 +23,7 @@ class TerminalFunctions():
                                 'maze2': {'doors': [0, 3], 'feeder': [2]},
                                 'oasis': {'doors': [],'feeder': []}}
     def get_clients_ips(self, selected_tasks):
-        if selected_tasks == 'SHARP':
+        if selected_tasks == 'BOTEVADE':
             devices = ['maze1', 'maze2']
             print(f'\t{devices}')
         else:
