@@ -41,7 +41,7 @@ defaults = {"experiment_name": "", "occlusions": "21_05", "rewards_cells": cellw
 command = ""
 
 def start_test_experiment():
-    print(f'\nHOTKEY: start experiment')
+    print(f'\nHOTKEY: START EXPERIMENT')
     response = clients['experiment'].start_experiment('TEST', 'test', 'hexagonal', 'mice', '00_00', 'test', 10)
     print("\nResponse: ")
     if isinstance(response, JsonObject):
@@ -50,10 +50,12 @@ def start_test_experiment():
             if member in defaults:
                 defaults[member] = getattr(response, member)
     print(defaults['experiment_name'])
-    print('\nHabitat: ')
-def hotkey_start_episode(experiment_name, rewards_sequence):
-    print(f'\nHOTKEY: start episode,{experiment_name}')
-    response = clients['experiment'].start_episode(experiment_name)
+    print("_________________\nHabitat: ", end = '')
+
+def hotkey_start_episode():
+    experiment_name = defaults["experiment_name"]
+    print(f'\nHOTKEY: START EPISODE')
+    response = clients['experiment'].start_episode(experiment_name, defaults["rewards_sequence"])
     print("\nResponse: ")
     if isinstance(response, JsonObject):
         for member in response.__dict__:
@@ -61,10 +63,10 @@ def hotkey_start_episode(experiment_name, rewards_sequence):
             if member in defaults:
                 defaults[member] = getattr(response, member)
     print(defaults['experiment_name'])
-    print('\nHabitat: ')
+    print("_________________\nHabitat: ", end = '')
 
 def hotkey_finish_episode():
-    print(f'\nHOTKEY: start episode')
+    print(f'\nHOTKEY: FINISH EPISODE')
     response = clients['experiment'].finish_episode()
     print("\nResponse: ")
     if isinstance(response, JsonObject):
@@ -73,10 +75,11 @@ def hotkey_finish_episode():
             if member in defaults:
                 defaults[member] = getattr(response, member)
     print(defaults['experiment_name'])
-    print('\nHabitat: ')
+    print("_________________\nHabitat: ", end = '')
 
-def hotkey_finish_experiment(experiment_name):
-    print(f'\nHOTKEY: start experiment,{experiment_name}')
+def hotkey_finish_experiment():
+    experiment_name = defaults["experiment_name"]
+    print(f'\nHOTKEY: FINISH EXPERIMENT')
     response = clients['experiment'].finish_experiment(experiment_name)
     print("\nResponse: ")
     if isinstance(response, JsonObject):
@@ -85,9 +88,7 @@ def hotkey_finish_experiment(experiment_name):
             if member in defaults:
                 defaults[member] = getattr(response, member)
     print(defaults['experiment_name'])
-    print('\nHabitat: ')
-
-
+    print("_________________\nHabitat: ", end = '')
 
 hotkeys = {'alt+shift': {'command': clients['maze1'].open_door, 'arg': [2]},
            '1+up': {'command': clients['maze1'].open_door, 'arg': [1]},
@@ -100,10 +101,10 @@ hotkeys = {'alt+shift': {'command': clients['maze1'].open_door, 'arg': [2]},
            '0+down': {'command': clients['maze2'].close_door, 'arg': [0]},
            '1+.': {'command': clients['maze1'].give_reward, 'arg': [1]},
            '2+.': {'command': clients['maze2'].give_reward, 'arg': [2]},
-           '9+down': {'command': hotkey_finish_episode, 'arg': []},
-           '9+up': {'command': hotkey_start_episode, 'arg': [defaults["experiment_name"], defaults["rewards_sequence"]]},
+           '9+right': {'command': hotkey_finish_episode, 'arg': []},
+           '9+left': {'command': hotkey_start_episode, 'arg': []},
            '9+t': {'command': start_test_experiment, 'arg': []},
-           '9+f': {'command': hotkey_finish_experiment, 'arg': [defaults["experiment_name"]]}
+           '9+f': {'command': hotkey_finish_experiment, 'arg': []}
            }
 
 # keyboard.add_hotkey('alt+shift', clients['maze1'].open_door, args=[2])
